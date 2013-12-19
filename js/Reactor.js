@@ -1,7 +1,7 @@
 function Reactor() {
     this.events = {};
 
-    this.addEventListener('onFrame', this.tick.bind(this));
+    this.addEventListener('onTick', this.tick.bind(this));
 
     this.fps = 60;
 
@@ -72,7 +72,12 @@ Reactor.prototype.tick = function() {
 };
 
 Reactor.prototype.startTickLoop = function() {
-    this.dispatchEvent('onTick');
+    this.dispatchEvent('onTick', {
+        mouse: {
+            X: this.mouseX,
+            Y: this.mouseY
+        }
+    });
 };
 
 Reactor.prototype.startCapturingMouse = function(e) {

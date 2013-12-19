@@ -8,8 +8,8 @@ var startDemo = function() {
     var dummyModel = new DummyModel();
     var movingModel = new MovingModel({
         eventReactor: reactor,
-        //drag: .98,
-        gravity: 10
+        dampFactor: .98, // .98,
+        gravity: 2
     });
 
 
@@ -67,13 +67,15 @@ var startDemo = function() {
 
     // workspace.drawLoop();
 
-    window.reactor = reactor;
-    reactor.startTickLoop();
+    reactor.tick();
     // workspace.start();
 
 
     console.log(workspace, holder, demo);
     console.log(workspace == workspace,workspace == holder, holder == demo);
+
+    window.reactor = reactor;
+    window.workspace = workspace;
 };
 
 window.onload = startDemo;

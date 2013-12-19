@@ -1,5 +1,9 @@
 function Ball() {
     Shape.call(this, arguments);
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.prevX = 0;
+    this.prevY = 0;
 };
 
 Ball.prototype = Object.create(Shape.prototype);

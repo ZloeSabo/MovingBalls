@@ -72,11 +72,6 @@ Workspace.prototype.setDemoPosition = function() {
     this.addScene(this.demo);
 };
 
-Workspace.prototype.addBall = function(ball) {
-    ball.context = this.foregroundContext;
-    this.balls[this.balls.length] = ball;
-};
-
 Workspace.prototype.addScene = function(scene) {
     scene.context = this.backgroundContext;
     this.scenes[this.scenes.length] = scene;
@@ -84,11 +79,6 @@ Workspace.prototype.addScene = function(scene) {
 
 Workspace.prototype.setMouseEvents = function() {
     //С IE 9+ можно использовать addEventListener
-
-    // this.mouseMoveHandler = this.mouseMoveHandler.bind(this);
-    // this.container.addEventListener('mousedown', this.mouseDownHandler.bind(this), false);
-    // this.container.addEventListener('mouseup', this.mouseUpHandler.bind(this), false);
-    // document.addEventListener('mousemove', this.mouseMoveHandler.bind(this), false);
 
     this.container.addEventListener('mousedown', this.eventReactor.mouseDownHandler, false);
     this.container.addEventListener('mouseup', this.eventReactor.mouseUpHandler, false);
@@ -102,20 +92,12 @@ Workspace.prototype.setMouseEvents = function() {
 //Mouse events
 Workspace.prototype.mouseDownHandler = function(e) {
     console.log('Mouse down', e);
-    // this.boundMoveHandler = this.mouseMoveHandler.bind(this);
-    // document.addEventListener('mousemove', this.mouseMoveHandler, false);
 
-    // for (var i in this.balls) {
-    //     var ball = this.balls[i];
-    //     if(ball.clicked(e.X, e.Y)) {
-    //         console.log(ball.id + " clicked");
-    //         this.draggedBall = ball;
-    //         return ball;
-    //     }
-    // }
-    for(var i in this.scenes) {
-        var scene = this.scenes[i];
-        var object = scene.clicked(e);
+    var object = null;
+    var searchArray = this.scenes.concat([this]);
+    for(var i in searchArray) {
+        var scene = searchArray[i];
+        object = scene.clicked(e);
         if(object) {
             object.dragged = true;
             this.dragged = object;
@@ -126,7 +108,9 @@ Workspace.prototype.mouseDownHandler = function(e) {
 
 Workspace.prototype.mouseUpHandler = function(e) {
     console.log('Mouse up', e);
-    this.dragged.dragged = false;
+    if(this.dragged) {
+        this.dragged.dragged = false;
+    }
     this.dragged = null;
     // document.removeEventListener('mousemove', this.mouseMoveHandler, false);
 };
@@ -137,6 +121,18 @@ Workspace.prototype.mouseMoveHandler = function(e) {
     if(dragged) {
         dragged.X = e.X;
         dragged.Y = e.Y;
+
+        // console.log("prevX: " + dragged.prevX + " currentX:" + dragged.X + " prevY:" + dragged.prevY + " currentY:"  +dragged.Y);
+
+        // dragged.velocityX = dragged.X - dragged.prevX;
+        // dragged.velocityY = dragged.Y - dragged.prevY;
+
+        // dragged.prevX = dragged.X;
+        // dragged.prevY = dragged.Y;
+
+        // console.log(dragged.velocityX, dragged.velocityY);
+
+
 
         if(dragged.parent && !dragged.parent.containsObject(dragged)) {
             dragged.parent.releaseObject(dragged);
@@ -167,7 +163,3 @@ Workspace.prototype.mouseMoveHandler = function(e) {
     // console.log('Mouse moved', this.ie, mouseX, mouseY, e);
 };
 //End of mouse events section
-
-Workspace.prototype.findResponsibleModel = function() {
-
-};
