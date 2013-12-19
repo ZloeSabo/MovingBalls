@@ -77,6 +77,23 @@ Workspace.prototype.addScene = function(scene) {
     this.scenes[this.scenes.length] = scene;
 };
 
+Workspace.prototype.handleObjectCapture = function(object) {
+    var searchArray = this.scenes.concat([this]);
+
+    for(var i in searchArray) {
+        var scene = searchArray[i];
+        if(scene.containsObject(object)) {
+            if(scene != object.parent) {
+                if(object.parent) {
+                    object.parent.releaseObject(object);
+                }
+                scene.captureObject(object);
+            }
+            return scene;
+        }
+    }
+};
+
 Workspace.prototype.setMouseEvents = function() {
     //С IE 9+ можно использовать addEventListener
 
@@ -138,18 +155,20 @@ Workspace.prototype.mouseMoveHandler = function(e) {
             dragged.parent.releaseObject(dragged);
         }
 
-        for(var i in this.scenes) {
-            var scene = this.scenes[i];
-            if(scene.containsObject(dragged)) {
-                if(scene != dragged.parent) {
-                    if(dragged.parent) {
-                        dragged.parent.releaseObject(dragged);
-                    }
-                    scene.captureObject(dragged);
-                }
-                return scene;
-            }
-        }
+        // for(var i in this.scenes) {
+        //     var scene = this.scenes[i];
+        //     if(scene.containsObject(dragged)) {
+        //         if(scene != dragged.parent) {
+        //             if(dragged.parent) {
+        //                 dragged.parent.releaseObject(dragged);
+        //             }
+        //             scene.captureObject(dragged);
+        //         }
+        //         return scene;
+        //     }
+        // }
+
+        this.handleObjectCapture(dragged);
 
         //Глобальная сцена в последнюю очередь, иначе в любом случае захватит объект
         if (!dragged.parent && this.containsObject(dragged)) {

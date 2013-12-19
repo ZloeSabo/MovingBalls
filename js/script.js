@@ -67,22 +67,12 @@ var startDemo = function() {
         context: workspace.foregroundContext
     });
 
-    holder.captureObject(ball1);
-    holder.captureObject(ball2);
-
-    // workspace.addBall(ball1);
-
-    // for (var i = 0; i >= 10; i++) {
-    //     workspace.addBall();
-    // };
+    workspace.handleObjectCapture(ball1);
+    workspace.handleObjectCapture(ball2);
 
     workspace.drawBackground();
 
-    // workspace.drawLoop();
-
     reactor.tick();
-    // workspace.start();
-
 
     console.log(workspace, holder, demo);
     console.log(workspace == workspace,workspace == holder, holder == demo);
