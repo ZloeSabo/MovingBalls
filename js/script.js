@@ -8,8 +8,9 @@ var startDemo = function() {
     var dummyModel = new DummyModel();
     var movingModel = new MovingModel({
         eventReactor: reactor,
-        dampFactor: .98, // .98,
-        gravity: 2
+        dampFactor: .98, // .98, //Коэффициент затухания
+        springFactor: .5, //Коэффициент эластичности
+        gravity: 2,
     });
 
 
@@ -55,7 +56,19 @@ var startDemo = function() {
         context: workspace.foregroundContext
     });
 
+    var ball2 = new Ball({
+        id: 'Ball2',
+        size: 10,
+        fillStyle: '#abcabc',
+        X: workspace.holder.X + workspace.holder.width / 2 + 10,
+        Y: workspace.holder.Y + workspace.holder.height / 2 + 10,
+        bounce: 1,
+        dragged: false,
+        context: workspace.foregroundContext
+    });
+
     holder.captureObject(ball1);
+    holder.captureObject(ball2);
 
     // workspace.addBall(ball1);
 

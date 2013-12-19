@@ -29,10 +29,17 @@ MovingModel.prototype.update = function() {
             this.handleHorizontalSceneCollision(object);
             this.handleVerticalSceneCollision(object);
             
-            if ((object.velocityX + object.velocityY) > 1) {
+            if (Math.abs(object.velocityX) < 1) {
+                object.velocityX = 0;
+            }
+
+            if (Math.abs(object.velocityY) < 1) {
+                object.velocityY = 0;
+            }
+
+
             object.velocityX = object.velocityX * this.dampFactor;
             object.velocityY = object.velocityY * this.dampFactor + this.gravity;
-            }
             // console.log(object.id, object.X, object.Y, object.velocityX, object.velocityY);
         } else {
             object.velocityX = object.X - object.prevX;
@@ -74,10 +81,51 @@ MovingModel.prototype.handleVerticalSceneCollision = function(object) {
 };
 
 MovingModel.prototype.handleObjectCollisions = function() {
+    var tmp = this.scene.objects;
+    var objects = Object.keys(tmp).map(function(k) {
+        return tmp[k]
+    });
 
+    var count = objects.length;
+
+    for(var i = 0; i < (count-1); i++)
+    {
+        var firstObject = objects[i];
+        
+        for(var j = i + 1; j < count; ++j)
+        {
+            var secondObject = objects[j];
+            var dx = secondObject.X - firstObject.X;
+            var dy = secondObject.Y - firstObject.Y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            var minDist = firstObject.size + secondObject.size;
+            
+            if(dist < minDist)
+            {
+                var angle = Math.atan2(dy, dx);
+                var tx = firstObject.X + dx / dist * minDist;
+                var ty = firstObject.Y + dy / dist * minDist;
+                var ax = (tx - secondObject.X);
+                var ay = (ty - secondObject.Y);
+                
+                firstObject.X -= ax;
+                firstObject.Y -= ay;
+                
+                secondObject.X += ax;
+                secondObject.Y += ay;
+                
+                
+                firstObject.velocityX -= (ax * this.springFactor);
+                firstObject.velocityY -= (ay * this.springFactor);
+                secondObject.velocityX += (ax * this.springFactor);
+                secondObject.velocityY += (ay * this.springFactor);
+            }
+        }
+    }
 };
 
 MovingModel.prototype.handleTick = function() {
+    this.handleObjectCollisions();
     this.update();
 };
 
