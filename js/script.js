@@ -5,7 +5,7 @@ var el = function(id) {
 var startDemo = function() {
 
     var reactor = new Reactor();
-    var dummyModel = new DummyModel();
+
     var movingModel = new MovingModel({
         eventReactor: reactor,
         dampFactor: .98, // .98, //Коэффициент затухания
@@ -14,14 +14,16 @@ var startDemo = function() {
     });
 
 
-    var holder = new Scene({
-        id: 'holder'
-    });
+    // var holder = new Scene({
+    //     id: 'holder'
+    // });
 
-    var demo = new Scene({
-        id: 'demo',
-        model: movingModel
-    });
+
+
+    // var demo = new Scene({
+    //     id: 'demo',
+    //     model: movingModel
+    // });
 
     var workspaceContainer = el('workspace');
     workspaceContainer.setAttribute('width', document.body.clientWidth);
@@ -45,37 +47,51 @@ var startDemo = function() {
         eventReactor: reactor
     });
 
-    var ball1 = new Ball({
-        id: 'Ball1',
-        size: 10,
-        fillStyle: '#bb698f',
-        X: workspace.holder.X + workspace.holder.width / 2,
-        Y: workspace.holder.Y + workspace.holder.height / 2,
-        bounce: 1,
-        dragged: false,
-        context: workspace.foregroundContext
+    var holder = Shape.wake('Scene.holder', {
+        id: 'holder'
     });
 
-    var ball2 = new Ball({
-        id: 'Ball2',
-        size: 10,
-        fillStyle: '#abcabc',
-        X: workspace.holder.X + workspace.holder.width / 2 + 10,
-        Y: workspace.holder.Y + workspace.holder.height / 2 + 10,
-        bounce: 1,
-        dragged: false,
-        context: workspace.foregroundContext
+    workspace.holder = holder;
+    workspace.setHolderPosition();
+
+    var demo = Shape.wake('Scene.demo', {
+        id: 'demo',
+        model: movingModel
     });
 
-    workspace.handleObjectCapture(ball1);
-    workspace.handleObjectCapture(ball2);
+    workspace.demo = demo;
+    workspace.setDemoPosition();
+
+    if(true || !holder.awaken) {
+        var colorLetters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+        //TODO просчитать наложение шариков
+        for(var i = 0; i < 11; i++)
+        {
+            var bounce = .5 + (Math.random() * .5);
+            var size = 35 - (bounce * 25);
+            var color = "";
+
+            for (var j = 0; j < 6; j++) {
+                color += colorLetters[Math.round(Math.random()*14)];
+            };
+
+            var ball = Shape.wake('Ball.Ball' + i, {
+                id: 'Ball' + i,
+                size: size,
+                fillStyle: '#' + color,
+                X: workspace.holder.X + size + ((workspace.holder.width - size*2) * Math.random()),
+                Y: workspace.holder.Y + size + ((workspace.holder.height - size*2) * Math.random()),
+                bounce: bounce,
+                dragged: false,
+                context: workspace.foregroundContext
+            });
+            workspace.handleObjectCapture(ball);
+        }
+    }
 
     workspace.drawBackground();
 
     reactor.tick();
-
-    console.log(workspace, holder, demo);
-    console.log(workspace == workspace,workspace == holder, holder == demo);
 
     window.reactor = reactor;
     window.workspace = workspace;

@@ -9,6 +9,8 @@ function Reactor() {
     this.startCapturingMouse = this.startCapturingMouse.bind(this);
     this.mouseUpHandler = this.mouseUpHandler.bind(this);
     this.startCapturingMouse();
+
+    window.addEventListener("beforeunload", this.windowCloseHandler.bind(this), false);
 }
 
 Reactor.prototype.registerEvent = function(eventName) {
@@ -115,4 +117,8 @@ Reactor.prototype.mouseUpHandler = function() {
         X: this.mouseX,
         Y: this.mouseY
     });
+};
+
+Reactor.prototype.windowCloseHandler = function() {
+    this.dispatchEvent('onWindowClose');
 };

@@ -8,15 +8,16 @@ function Workspace() {
     this.backgroundContext = this.background.getContext('2d');
     this.foregroundContext = this.container.getContext('2d');
     
-    this.setHolderPosition();
-    this.setDemoPosition();
+    // this.setHolderPosition();
+    // this.setDemoPosition();
     this.setMouseEvents();
 
     this.eventReactor.ie = this.ie;
     this.eventReactor.addEventListener('onTick', this.draw.bind(this));
+    this.eventReactor.addEventListener('onWindowClose', this.sleep.bind(this));
 }
 Workspace.prototype = Object.create(Scene.prototype);
-// Workspace.prototype.constructor = Workspace;
+Workspace.prototype.constructor = Workspace;
 
 //TODO перерисовать при ресайзе окна
 Workspace.prototype.drawBackground = function() {
@@ -154,20 +155,7 @@ Workspace.prototype.mouseMoveHandler = function(e) {
         if(dragged.parent && !dragged.parent.containsObject(dragged)) {
             dragged.parent.releaseObject(dragged);
         }
-
-        // for(var i in this.scenes) {
-        //     var scene = this.scenes[i];
-        //     if(scene.containsObject(dragged)) {
-        //         if(scene != dragged.parent) {
-        //             if(dragged.parent) {
-        //                 dragged.parent.releaseObject(dragged);
-        //             }
-        //             scene.captureObject(dragged);
-        //         }
-        //         return scene;
-        //     }
-        // }
-
+        
         this.handleObjectCapture(dragged);
 
         //Глобальная сцена в последнюю очередь, иначе в любом случае захватит объект
@@ -175,10 +163,17 @@ Workspace.prototype.mouseMoveHandler = function(e) {
             this.captureObject(dragged);
         }
 
-        //dragged.parent.handleObjectDrag(dragged);
-
     }
 
     // console.log('Mouse moved', this.ie, mouseX, mouseY, e);
 };
 //End of mouse events section
+
+Workspace.prototype.sleep = function() {
+    // var sleeping = Scene.sleep.apply(this);
+    for (var i in this.scenes) {
+        this.scenes[i].sleep();
+    };
+
+    // return sleeping;
+}

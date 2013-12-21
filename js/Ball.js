@@ -1,13 +1,10 @@
 function Ball() {
     Shape.call(this, arguments);
-    this.velocityX = 0;
-    this.velocityY = 0;
-    this.prevX = 0;
-    this.prevY = 0;
+    this.sleepProperties = ["id", "X", "Y", "velocityX", "velocityY", "prevX", "prevY", "size", "fillStyle", "bounce"];
 };
 
 Ball.prototype = Object.create(Shape.prototype);
-// Ball.prototype.constructor = Ball;
+Ball.prototype.constructor = Ball;
 
 Ball.prototype.draw = function() {
     // console.log(this.id, this.X, this.Y, this.size)

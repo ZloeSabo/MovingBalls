@@ -9,7 +9,8 @@ function Scene() {
 }
 
 Scene.prototype = Object.create(Shape.prototype);
-// Scene.prototype.constructor = Scene;
+Scene.prototype.constructor = Scene;
+
 Scene.prototype.draw = function() {
     // console.log(this.id, this.X, this.Y, this.width, this.height);
 
