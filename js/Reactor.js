@@ -1,3 +1,5 @@
+window.console = { log: function() {}};
+
 function Reactor() {
     this.events = {};
 
@@ -10,7 +12,8 @@ function Reactor() {
     this.mouseUpHandler = this.mouseUpHandler.bind(this);
     this.startCapturingMouse();
 
-    window.addEventListener("beforeunload", this.windowCloseHandler.bind(this), false);
+    window.addEventListener('beforeunload', this.windowCloseHandler.bind(this), false);
+    window.addEventListener('onresize', this.windowResizeHandler.bind(this), false);
 }
 
 Reactor.prototype.registerEvent = function(eventName) {
@@ -49,7 +52,9 @@ Reactor.prototype.requestTimeout = function(fn, delay) {
         !(window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame) && // Firefox 5 ships without cancel support
         !window.oRequestAnimationFrame      && 
         !window.msRequestAnimationFrame)
-            return window.setTimeout(fn, delay).bind(this);
+            //return function(fn, delay) {
+            return    window.setTimeout(fn.bind(this), delay)
+            //}.bind(this);
             
     var start = Date.now(),
         handle = new Object(),
@@ -121,4 +126,8 @@ Reactor.prototype.mouseUpHandler = function() {
 
 Reactor.prototype.windowCloseHandler = function() {
     this.dispatchEvent('onWindowClose');
+};
+
+Reactor.prototype.windowResizeHandler = function() {
+    this.dispatchEvent('onWindowResize');
 };

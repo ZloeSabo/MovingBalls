@@ -15,6 +15,7 @@ function Workspace() {
     this.eventReactor.ie = this.ie;
     this.eventReactor.addEventListener('onTick', this.draw.bind(this));
     this.eventReactor.addEventListener('onWindowClose', this.sleep.bind(this));
+    this.eventReactor.addEventListener('onTick', this.windowResize.bind(this));
 }
 Workspace.prototype = Object.create(Scene.prototype);
 Workspace.prototype.constructor = Workspace;
@@ -141,12 +142,13 @@ Workspace.prototype.mouseMoveHandler = function(e) {
         dragged.Y = e.Y;
 
         // console.log("prevX: " + dragged.prevX + " currentX:" + dragged.X + " prevY:" + dragged.prevY + " currentY:"  +dragged.Y);
+        if(this.ie) {
+            dragged.velocityX = dragged.X - dragged.prevX;
+            dragged.velocityY = dragged.Y - dragged.prevY;
 
-        // dragged.velocityX = dragged.X - dragged.prevX;
-        // dragged.velocityY = dragged.Y - dragged.prevY;
-
-        // dragged.prevX = dragged.X;
-        // dragged.prevY = dragged.Y;
+            dragged.prevX = dragged.X;
+            dragged.prevY = dragged.Y;
+        }
 
         // console.log(dragged.velocityX, dragged.velocityY);
 
@@ -177,3 +179,31 @@ Workspace.prototype.sleep = function() {
 
     // return sleeping;
 }
+
+Workspace.prototype.windowResize = function() {
+    var width = document.body.clientWidth;
+    var height = document.body.clientHeight;
+
+    if(width != this.container.width || height != this.container.height) {
+        // debugger;
+        this.background.setAttribute('width', 1);
+        this.background.setAttribute('height', 1);
+
+        this.background.setAttribute('width', width);
+        this.background.setAttribute('height', height);
+
+        this.container.setAttribute('width', 1);
+        this.container.setAttribute('height', 1);
+
+        this.container.setAttribute('width', width);
+        this.container.setAttribute('height', height);
+
+        this.width = width;
+        this.height = height;
+
+        this.scenes = [];
+        this.setHolderPosition();
+        this.setDemoPosition();
+        this.drawBackground();
+    }
+};
